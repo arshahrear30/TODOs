@@ -1,130 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:shahrearapp/task.dart';
-import 'package:intl/intl.dart';//yaml    intl: ^0.18.1
-import 'package:shahrearapp/update_task_modal.dart';
-import 'package:shahrearapp/add_new_task_modal.dart';
+class UpdateTaskModal extends StatefulWidget {
+  const UpdateTaskModal({
+    super.key,
+    required this.todo,
+    required this.onTodoUpdate
+  });
 
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Todo todo;
+  final Function(String) onTodoUpdate;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<UpdateTaskModal> createState() => _UpdateTaskModalState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _UpdateTaskModalState extends State<UpdateTaskModal> {
+  late TextEditingController todoTEController;
 
-  List<Todo> todoList = [];
+  @override
+  void initState() {
+    super.initState();
+    todoTEController = TextEditingController(text: widget.todo.details);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Todos'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (context) {
-              return AddNewTaskModal(
-                onAddTap: (Todo task) {
-                  addTodo(task);
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Update todo',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
                 },
-              );
-            },
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: ListView.separated(
-        itemCount: todoList.length,
-        itemBuilder: (context, index) {
-          final Todo todo = todoList[index];
-          final String formattedDate =
-          DateFormat('hh:mm a dd-MM-yy').format(todo.createdDateTime);//import 'package:intl/intl.dart';
-          return ListTile(
-            tileColor: todo.status == 'done' ? Colors.grey : null, // ternary
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Actions'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.edit),
-                            title: const Text('Update'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return UpdateTaskModal(
-                                      todo: todo,
-                                      onTodoUpdate: (String updatedDetailsText) {
-                                        updateTodo(index, updatedDetailsText);
-                                      },
-                                    );
-                                  });
-                            },
-                          ),
-                          const Divider(
-                            height: 0,
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.delete_outline),
-                            title: const Text('Delete'),
-                            onTap: () {
-                              deleteTodo(index);
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  });
-            },
-            onLongPress: () {
-              String currentStatus = todo.status == 'pending' ? 'done' : 'pending';
-              updateTodoStatus(index, currentStatus);
-            },
-            leading: CircleAvatar(
-              child: Text('${index + 1}'),
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          TextFormField(
+            controller: todoTEController,
+            maxLines: 4,
+            decoration: const InputDecoration(
+              hintText: 'Enter your todo here',
+              enabledBorder: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(),
             ),
-            title: Text(todo.details),
-            subtitle: Text(formattedDate),
-            trailing: Text(todo.status.toUpperCase()),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const Divider(
-            height: 4,
-          );
-        },
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  widget.onTodoUpdate(todoTEController.text.trim());
+                  Navigator.pop(context);
+                },
+                child: const Text('Update'),
+              ))
+        ],
       ),
     );
-  }
-
-  void addTodo(Todo todo) {
-    todoList.add(todo);
-    setState(() {});
-  }
-
-  void deleteTodo(int index) {
-    todoList.removeAt(index);
-    setState(() {});
-  }
-
-  void updateTodo(int index, String todoDetails) {
-    todoList[index].details = todoDetails;
-    setState(() {});
-  }
-
-  void updateTodoStatus(int index, String status) {
-    todoList[index].status = status;
-    setState(() {});
   }
 }
