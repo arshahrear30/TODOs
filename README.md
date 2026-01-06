@@ -3,3 +3,9 @@
 // তাই widget এর main name এ click দেবো >> Refactor >> Extract Flutter Widget >> Widget আলাদা হয়ে যাবে। 
 // পরে ঐটা copy paste করবো অন্য dart file open করে।
 
+
+
+//push()	নতুন page খোলা //pop()	আগের page এ ফেরা
+
+Navigator.pop(context);//Back button এর কাজ করে
+
