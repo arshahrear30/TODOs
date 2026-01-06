@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:shahrearapp/task.dart';
+class UpdateTaskModal extends StatefulWidget {
+  const UpdateTaskModal({
+    super.key,
+    required this.todo,
+    required this.onTodoUpdate
+  });
 
+  final Todo todo;
+  final Function(String) onTodoUpdate;
 
-class UpdateTaskModal extends StatelessWidget {
-  const UpdateTaskModal({super.key});
+  @override
+  State<UpdateTaskModal> createState() => _UpdateTaskModalState();
+}
+
+class _UpdateTaskModalState extends State<UpdateTaskModal> {
+  late TextEditingController todoTEController;
+
+  @override
+  void initState() {
+    super.initState();
+    todoTEController = TextEditingController(text: widget.todo.details);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(17.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           Row(
@@ -17,37 +36,39 @@ class UpdateTaskModal extends StatelessWidget {
               Text(
                 'Update todo',
                 style: Theme.of(context).textTheme.titleLarge,
-              ), // Text
+              ),
               IconButton(
                 onPressed: () {
-                  Navigator.pop(
-                    context,
-                  ); //eta deyar karon e cancel button kaz  koray functional vabey
+                  Navigator.pop(context);
                 },
                 icon: const Icon(Icons.close),
-              ), // IconButton
+              ),
             ],
-          ), // Row
-
-          const SizedBox(height: 26), //box er asey pashe 16 kore jayga rakbay
-
+          ),
+          const SizedBox(
+            height: 24,
+          ),
           TextFormField(
-            maxLines: 4, //eta dilay input box ta 4 line er moto jayga paibo
-
-            decoration: InputDecoration(
+            controller: todoTEController,
+            maxLines: 4,
+            decoration: const InputDecoration(
               hintText: 'Enter your todo here',
               enabledBorder: OutlineInputBorder(),
               focusedBorder: OutlineInputBorder(),
-            ), // InputDecoration
-          ), // TextFormField
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('Update'),
             ),
           ),
+          const SizedBox(
+            height: 16,
+          ),
+          SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  widget.onTodoUpdate(todoTEController.text.trim());
+                  Navigator.pop(context);
+                },
+                child: const Text('Update'),
+              ))
         ],
       ),
     );
