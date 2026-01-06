@@ -9,3 +9,15 @@
 
 Navigator.pop(context);//Back button এর কাজ করে
 
+
+//-----------------------pubspec.yaml  restart the Android studio .. it's use for real time Time take ..
+by this :: import 'package:intl/intl.dart'; 
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  intl: ^0.18.1
+
+  cupertino_icons: ^1.0.8
+//---------------------------
